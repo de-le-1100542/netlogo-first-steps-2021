@@ -8,3 +8,9 @@ This repository serves students and teachers of the 2021 Ecosystem Modeling cour
 * Edit this text file and change something trivial, save it and make your first commit
 * Clone the repository to your local computer and look at the files you received
 
+You may use the `GitHub Desktop` client application, or another one like `Tortoise Git` or install `git` in your command line, then perform one of the `clone` actions:
+
+```
+gh repo clone de-le-1100542/netlogo-first-steps-2021
+git clone https://github.com/de-le-1100542/netlogo-first-steps-2021.git
+```
