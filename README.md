@@ -14,3 +14,7 @@ You may use the `GitHub Desktop` client application, or another one like `Tortoi
 gh repo clone de-le-1100542/netlogo-first-steps-2021
 git clone https://github.com/de-le-1100542/netlogo-first-steps-2021.git
 ```
+# What to do next
+
+* Have a look at the commit history
+* Try to push/pull to and from this repository
