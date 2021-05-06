@@ -13,6 +13,7 @@ breed [sharks shark]
 ; Assign a property to all turtles, regardless of breed
 turtles-own [speed]
 
+
 to setup
   clear-all
   setup-patches
@@ -57,6 +58,14 @@ to setup-turtles
   ]
 end
 
+
+; It is very nice to do a setup automatically at the time you
+; load your netlogo model.  This can be done via the special
+; "to startup" procedure
+
+to startup
+  setup
+end
 @#$#@#$#@
 GRAPHICS-WINDOW
 210
