@@ -88,7 +88,7 @@ to setup-turtles
   ]
 
   ask turtles [
-    setxy random-xcor random-ycor
+    move-to one-of patches with [ pcolor = blue ]
     set heading random 180
   ]
 end
