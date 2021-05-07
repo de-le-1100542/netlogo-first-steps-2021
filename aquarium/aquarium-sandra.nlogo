@@ -1,76 +1,69 @@
-; This program is a tutorial model for a small aquarium full
-; of colorful fish
+; Author: SW
+; Date: 2021-04-29
+; this simulation shows the life of an aquarium
 ;
-; @author Carsten Lemmen <carsten.lemmen@leuphana.de>
-; @copyright CC0  Creative Commons Zero
-; @date 2021-04-29
+; we look at fish
+; we have different species
 
-; define different types of turtles, all of these inherit
-; turtle properties and can be referenced by "turtle"
-breed [fish a-fish]
-breed [sharks shark]
+breed [ fish a-fish ]
+breed [ sharks shark ]
+breed [ corals coral ]
+breed [ algae alga ]
 
-; Assign a property to all turtles, regardless of breed
-turtles-own [speed]
+turtles-own [ speed ] ; all turtles may have different speeds
 
 to setup
   clear-all
   setup-patches
   setup-turtles
-  reset-ticks
 end
-
-to go
-  ask turtles [
-    ifelse ( patch-ahead  speed != nobody) and ( [pcolor] of patch-ahead speed = blue ) [
-      forward speed
-    ][
-      right 180
-    ]
-  ]
-  tick
-end
-
-
-;-------------------------------
 
 to setup-patches
-  ask patches [
-    set pcolor blue
-  ]
+  ask patches [ set pcolor blue ]
+  mark-a-blue-border
+   ask patches with [ count neighbors != 8 and pcolor = blue ]
+    [ set pcolor grey ]
+end
 
-  ; Define a sky above the water with 12.5% of the area
-  ask patches with [pycor > 0.75 * max-pycor] [set pcolor cyan + 2]
+to mark-a-blue-border
+  ask patches with [ pycor > 5 ] ; or pxcor < 0 and pycor < 0
+  [set pcolor cyan]
 end
 
 to setup-turtles
-
-  create-fish 25 [
-    set shape "fish"
+  create-fish 25
+  [ set shape "fish"
     set size 2
-    set speed (random-float 1.0)
+    set speed random-float 1.0 ; random-float sets also dezimal numbers, not only whole numbers like in random
   ]
-
-  create-sharks 3 [
-    set shape "fish"
+  create-sharks 3
+  [ set shape "fish"
     set color grey
     set size 6
-    set speed (random-float 2.0) + 1.0
+    set speed (random-float 2.0) + 1 ; sharks swim very quick and sometimes very slow
   ]
-
-  ask turtles [
-    setxy random-xcor random-ycor
-    set heading random 180
+  create-algae 30
+  [ set color green
+    set size 1
+    set speed 0.5
   ]
+  ask turtles [ move-to one-of patches with [pcolor = blue] ] ;turtles auf blaue patches
+ ; ask n-of 25 (patches with [ pcolor = blue ])
+ ; [ sprout-fish 1 ]
+ ; ask n-of 3 (patches with [ pcolor = blue ])
+ ; [ sprout-sharks 1 ]
+ ; ask n-of 30 (patches with [ pcolor = blue ])
+ ; [ sprout-algae 1 ]
 end
 
-
-; It is very nice to do a setup automatically at the time you
-; load your netlogo model.  This can be done via the special
-; "to startup" procedure
-
-to startup
-  setup
+to go
+  ask turtles
+  [
+   set heading random 180
+   while [[pcolor] of patch-ahead speed = cyan or patch-ahead speed = grey] ;ifelse [pcolor] of patch-ahead 1 = grey or patch-ahead 1 = cyan
+      [ right random-float 360 ]   ;; We see a blue patch in front of us. Turn a random amount.
+   fd speed
+  ]
 end
 @#$#@#$#@
 GRAPHICS-WINDOW
@@ -101,11 +94,11 @@ ticks
 30.0
 
 BUTTON
-16
+9
 13
-82
+72
 46
-setup
+NIL
 setup
 NIL
 1
@@ -118,12 +111,12 @@ NIL
 1
 
 BUTTON
-16
-55
-101
-88
-go-once
-go
+131
+12
+206
+45
+NIL
+go once
 NIL
 1
 T
@@ -135,11 +128,11 @@ NIL
 1
 
 BUTTON
-104
-55
-167
-88
-go
+132
+53
+195
+86
+NIL
 go
 T
 1

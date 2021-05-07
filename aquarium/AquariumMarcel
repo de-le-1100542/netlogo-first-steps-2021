@@ -1,76 +1,57 @@
-; This program is a tutorial model for a small aquarium full
-; of colorful fish
+; Author Marcel Schröder
+; Date: 29.4.2021
 ;
-; @author Carsten Lemmen <carsten.lemmen@leuphana.de>
-; @copyright CC0  Creative Commons Zero
-; @date 2021-04-29
 
-; define different types of turtles, all of these inherit
-; turtle properties and can be referenced by "turtle"
 breed [fish a-fish]
 breed [sharks shark]
+breed [algae algi]
 
-; Assign a property to all turtles, regardless of breed
-turtles-own [speed]
+turtles-own [speed]  ; all turtles may have different speeds
 
 to setup
   clear-all
   setup-patches
   setup-turtles
-  reset-ticks
 end
-
-to go
-  ask turtles [
-    ifelse ( patch-ahead  speed != nobody) and ( [pcolor] of patch-ahead speed = blue ) [
-      forward speed
-    ][
-      right 180
-    ]
-  ]
-  tick
-end
-
-
-;-------------------------------
 
 to setup-patches
-  ask patches [
-    set pcolor blue
-  ]
-
-  ; Define a sky above the water with 12.5% of the area
-  ask patches with [pycor > 0.75 * max-pycor] [set pcolor cyan + 2]
+  ask patches [set pcolor cyan]
 end
 
 to setup-turtles
-
-  create-fish 25 [
-    set shape "fish"
+  create-fish 25
+  [ set shape "fish"
     set size 2
-    set speed (random-float 1.0)
-  ]
+    set speed random-float 1.0
+    ]
 
-  create-sharks 3 [
-    set shape "fish"
+  create-sharks 3
+  [ set shape "fish"
     set color grey
     set size 6
-    set speed (random-float 2.0) + 1.0
-  ]
-
-  ask turtles [
-    setxy random-xcor random-ycor
-    set heading random 180
-  ]
+    set speed (random-float 2.0) + 1.0]
+  ask turtles [setxy random-xcor random-ycor]
 end
 
+to go
+  ask turtles
+  [ set heading random 180
+    forward speed]
+end
 
-; It is very nice to do a setup automatically at the time you
-; load your netlogo model.  This can be done via the special
-; "to startup" procedure
-
-to startup
-  setup
+to border
+  ask patches with [pycor > 5 ]
+  [set pcolor black]
+  ask patches with [pxcor < -12]
+  [set pcolor black]
+  ask patches with [pxcor < -13 ]
+  [set pcolor blue]
+  ask patches with [pxcor > 12]
+  [set pcolor black]
+  ask patches with [pxcor > 13 ]
+  [set pcolor blue]
+  ask patches with [pycor > 6 ]
+  [set pcolor blue]
 end
 @#$#@#$#@
 GRAPHICS-WINDOW
@@ -87,8 +68,8 @@ GRAPHICS-WINDOW
 1
 1
 0
-0
-0
+1
+1
 1
 -16
 16
@@ -101,11 +82,28 @@ ticks
 30.0
 
 BUTTON
-16
-13
-82
-46
-setup
+29
+27
+92
+60
+NIL
+go
+T
+1
+T
+OBSERVER
+NIL
+NIL
+NIL
+NIL
+1
+
+BUTTON
+30
+77
+93
+110
+NIL
 setup
 NIL
 1
@@ -118,11 +116,11 @@ NIL
 1
 
 BUTTON
-16
-55
-101
-88
-go-once
+105
+30
+184
+63
+ go once
 go
 NIL
 1
@@ -135,13 +133,13 @@ NIL
 1
 
 BUTTON
-104
-55
-167
-88
-go
-go
-T
+79
+180
+148
+213
+NIL
+border\n
+NIL
 1
 T
 OBSERVER

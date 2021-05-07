@@ -1,76 +1,63 @@
-; This program is a tutorial model for a small aquarium full
-; of colorful fish
+; Author: JH
+; Date: 29/4/2021
+; this simulation shows the life of an aquarium
 ;
-; @author Carsten Lemmen <carsten.lemmen@leuphana.de>
-; @copyright CC0  Creative Commons Zero
-; @date 2021-04-29
+; we look at fish
+; we have different species
 
-; define different types of turtles, all of these inherit
-; turtle properties and can be referenced by "turtle"
 breed [fish a-fish]
-breed [sharks shark]
+breed [sharks -shark]
+breed [corals coral]
+breed [algae agla]
 
-; Assign a property to all turtles, regardless of breed
-turtles-own [speed]
+
+turtles-own [speed] ; all fishes have different speeds
+
+
 
 to setup
   clear-all
   setup-patches
   setup-turtles
-  reset-ticks
+  mark-a-black-border
 end
 
-to go
-  ask turtles [
-    ifelse ( patch-ahead  speed != nobody) and ( [pcolor] of patch-ahead speed = blue ) [
-      forward speed
-    ][
-      right 180
-    ]
-  ]
-  tick
+to mark-a-black-border
+  ask patches with [pxcor > -17 and pycor > 12]
+  [set pcolor white]
+  ask patches with [pxcor > -17 and pycor < -13]
+  [set pcolor brown]
 end
-
-
-;-------------------------------
 
 to setup-patches
-  ask patches [
-    set pcolor blue
-  ]
-
-  ; Define a sky above the water with 12.5% of the area
-  ask patches with [pycor > 0.75 * max-pycor] [set pcolor cyan + 2]
+  ask patches [set pcolor cyan]
 end
 
 to setup-turtles
-
-  create-fish 25 [
-    set shape "fish"
+  create-fish 25
+  [set shape "fish"
     set size 2
-    set speed (random-float 1.0)
+    set speed random-float 1.0
   ]
 
-  create-sharks 3 [
-    set shape "fish"
+  create-sharks 3
+  [set shape "fish"
     set color grey
     set size 6
-    set speed (random-float 2.0) + 1.0
+    set speed (random-float 2.0) + 1;
   ]
 
-  ask turtles [
-    setxy random-xcor random-ycor
-    set heading random 180
-  ]
+  ask turtles [ setxy random-xcor random-ycor]
 end
 
+to go
+  ask turtles
 
-; It is very nice to do a setup automatically at the time you
-; load your netlogo model.  This can be done via the special
-; "to startup" procedure
-
-to startup
-  setup
+  [
+    ifelse [pcolor] of patch-ahead 1 = white
+      [ lt random-float 360 ]
+      [ fd 1 ]
+  ]
 end
 @#$#@#$#@
 GRAPHICS-WINDOW
@@ -87,8 +74,8 @@ GRAPHICS-WINDOW
 1
 1
 0
-0
-0
+1
+1
 1
 -16
 16
@@ -101,30 +88,13 @@ ticks
 30.0
 
 BUTTON
-16
-13
-82
-46
-setup
-setup
-NIL
-1
-T
-OBSERVER
-NIL
-NIL
-NIL
-NIL
-1
-
-BUTTON
-16
-55
-101
-88
-go-once
+116
+41
+179
+74
 go
-NIL
+go 
+T
 1
 T
 OBSERVER
@@ -135,13 +105,30 @@ NIL
 1
 
 BUTTON
+14
+98
 104
-55
-167
-88
-go
-go
+131
+go once
+go 
+NIL
+1
 T
+OBSERVER
+NIL
+NIL
+NIL
+NIL
+1
+
+BUTTON
+13
+41
+86
+74
+setup
+setup 
+NIL
 1
 T
 OBSERVER

@@ -1,76 +1,56 @@
-; This program is a tutorial model for a small aquarium full
-; of colorful fish
+; Author: HR
+; Date: 2021-04-29
+; this simulation shows the life of an aquarium
 ;
-; @author Carsten Lemmen <carsten.lemmen@leuphana.de>
-; @copyright CC0  Creative Commons Zero
-; @date 2021-04-29
+; we look at fish
+; we have different species
 
-; define different types of turtles, all of these inherit
-; turtle properties and can be referenced by "turtle"
 breed [fish a-fish]
 breed [sharks shark]
+breed [corals coral]
+breed [algae a-algae]
 
-; Assign a property to all turtles, regardless of breed
-turtles-own [speed]
-
+turtles-own [speed] ; attribut das nicht von netlogo vorgegebn ist, muss definiert werden
 to setup
   clear-all
   setup-patches
   setup-turtles
-  reset-ticks
 end
-
-to go
-  ask turtles [
-    ifelse ( patch-ahead  speed != nobody) and ( [pcolor] of patch-ahead speed = blue ) [
-      forward speed
-    ][
-      right 180
-    ]
-  ]
-  tick
-end
-
-
-;-------------------------------
 
 to setup-patches
-  ask patches [
-    set pcolor blue
-  ]
-
-  ; Define a sky above the water with 12.5% of the area
-  ask patches with [pycor > 0.75 * max-pycor] [set pcolor cyan + 2]
+  ask patches with [pycor < 13]
+  [set pcolor cyan]
+    ask patches with [pycor > 12]
+    [ set pcolor blue ]
 end
 
 to setup-turtles
-
-  create-fish 25 [
-    set shape "fish"
+  create-fish 25
+  [ set shape "fish"
     set size 2
-    set speed (random-float 1.0)
+    set speed random-float 1.0
   ]
-
-  create-sharks 3 [
-    set shape "fish"
+  create-sharks 3
+  [ set shape "fish"
     set color grey
     set size 6
-    set speed (random-float 2.0) + 1.0
+    set speed (random-float 2.0) + 1 ; sharks swim sometimes fast and sometimes slow
   ]
-
-  ask turtles [
-    setxy random-xcor random-ycor
-    set heading random 180
-  ]
+  ask turtles [move-to one-of patches with [pcolor = cyan]]
+    ; damit die startposition zufällig ist
 end
 
+to go
+  ask turtles
+  [ set heading random 180
+    while [[pcolor] of patch-ahead speed = blue ]
+    [ lt random-float 360 ]
+    forward speed
+  ]
+ ; ifelse [pcolor] of patch-ahead 1 = blue
+  ;    [ lt random-float 360 ]   ;; We see a blue patch in front of us. Turn a random amount.
+   ;   [ fd speed ]
 
-; It is very nice to do a setup automatically at the time you
-; load your netlogo model.  This can be done via the special
-; "to startup" procedure
-
-to startup
-  setup
 end
 @#$#@#$#@
 GRAPHICS-WINDOW
@@ -87,8 +67,8 @@ GRAPHICS-WINDOW
 1
 1
 0
-0
-0
+1
+1
 1
 -16
 16
@@ -101,47 +81,47 @@ ticks
 30.0
 
 BUTTON
-16
+14
+58
+77
+91
+NIL
+go
+T
+1
+T
+OBSERVER
+NIL
+NIL
+NIL
+NIL
+1
+
+BUTTON
+11
+10
+74
+43
+NIL
+setup
+NIL
+1
+T
+OBSERVER
+NIL
+NIL
+NIL
+NIL
+1
+
+BUTTON
+90
 13
-82
+165
 46
-setup
-setup
+go once
+go 
 NIL
-1
-T
-OBSERVER
-NIL
-NIL
-NIL
-NIL
-1
-
-BUTTON
-16
-55
-101
-88
-go-once
-go
-NIL
-1
-T
-OBSERVER
-NIL
-NIL
-NIL
-NIL
-1
-
-BUTTON
-104
-55
-167
-88
-go
-go
-T
 1
 T
 OBSERVER
@@ -493,7 +473,7 @@ false
 Polygon -7500403 true true 270 75 225 30 30 225 75 270
 Polygon -7500403 true true 30 75 75 30 270 225 225 270
 @#$#@#$#@
-NetLogo 6.2.0
+NetLogo 6.1.1
 @#$#@#$#@
 @#$#@#$#@
 @#$#@#$#@

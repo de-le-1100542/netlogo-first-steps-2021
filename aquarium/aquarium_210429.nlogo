@@ -1,76 +1,72 @@
-; This program is a tutorial model for a small aquarium full
-; of colorful fish
-;
-; @author Carsten Lemmen <carsten.lemmen@leuphana.de>
-; @copyright CC0  Creative Commons Zero
-; @date 2021-04-29
+;author SO
+;date: 2021-04-29
+; aquarium - fish - different species
 
-; define different types of turtles, all of these inherit
-; turtle properties and can be referenced by "turtle"
 breed [fish a-fish]
 breed [sharks shark]
+breed [corals coral]
+breed [algae alga]
 
-; Assign a property to all turtles, regardless of breed
-turtles-own [speed]
+turtles-own [speed] ; all turtles may have different speeds
 
 to setup
   clear-all
   setup-patches
   setup-turtles
-  reset-ticks
 end
-
-to go
-  ask turtles [
-    ifelse ( patch-ahead  speed != nobody) and ( [pcolor] of patch-ahead speed = blue ) [
-      forward speed
-    ][
-      right 180
-    ]
-  ]
-  tick
-end
-
-
-;-------------------------------
 
 to setup-patches
-  ask patches [
-    set pcolor blue
-  ]
-
-  ; Define a sky above the water with 12.5% of the area
-  ask patches with [pycor > 0.75 * max-pycor] [set pcolor cyan + 2]
+  ask patches [set pcolor cyan]
+  ask patches with [pycor > 0]
+  [set pcolor brown]
+  ask patches with [pcolor = black] [sprout 1]
 end
 
 to setup-turtles
-
-  create-fish 25 [
-    set shape "fish"
-    set size 2
-    set speed (random-float 1.0)
+  create-fish 25
+  [set shape "fish"
+   set size 2
+    set speed 1.0
+    set speed random-float 1.0
   ]
-
-  create-sharks 3 [
-    set shape "fish"
-    set color grey
+  create-sharks 3
+  [set shape "fish"
+  set color grey
     set size 6
-    set speed (random-float 2.0) + 1.0
+    set speed (random-float 2.0) + 1 ; sharks swim very quickly and sometimes slower than other fish
   ]
-
-  ask turtles [
-    setxy random-xcor random-ycor
-    set heading random 180
-  ]
+  ask turtles [move-to one-of patches with [pcolor = cyan]]
+  ;[setxy random-xcor ycor]
 end
 
+to go
+  ask turtles
+  [set heading random 180
+    while [[pcolor] of patch-ahead speed = brown]
+    [lt random-float 360]
+    forward speed
+  ]
+end
+; oder: maxpycor
 
-; It is very nice to do a setup automatically at the time you
-; load your netlogo model.  This can be done via the special
-; "to startup" procedure
+; mark a line or a border
 
-to startup
-  setup
+to setup2
+  ask patches
+  [set pcolor blue]
+  mark-a-black-border
+  change-color
+end
+
+to mark-a-black-border
+  ask patches with [pxcor < 0 and pycor < 0]
+  [set pcolor black]
+end
+
+to change-color
+  ask patches with [pcolor = black]
+  [set pcolor grey
+  ]
 end
 @#$#@#$#@
 GRAPHICS-WINDOW
@@ -87,8 +83,8 @@ GRAPHICS-WINDOW
 1
 1
 0
-0
-0
+1
+1
 1
 -16
 16
@@ -101,11 +97,45 @@ ticks
 30.0
 
 BUTTON
-16
-13
 82
-46
-setup
+88
+145
+121
+go
+go
+T
+1
+T
+OBSERVER
+NIL
+NIL
+NIL
+NIL
+1
+
+BUTTON
+87
+48
+162
+81
+go once
+go
+NIL
+1
+T
+OBSERVER
+NIL
+NIL
+NIL
+NIL
+1
+
+BUTTON
+81
+143
+144
+176
+NIL
 setup
 NIL
 1
@@ -118,30 +148,13 @@ NIL
 1
 
 BUTTON
-16
-55
-101
 88
-go-once
-go
+199
+158
+232
 NIL
-1
-T
-OBSERVER
+setup2
 NIL
-NIL
-NIL
-NIL
-1
-
-BUTTON
-104
-55
-167
-88
-go
-go
-T
 1
 T
 OBSERVER
