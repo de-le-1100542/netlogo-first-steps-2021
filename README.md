@@ -18,3 +18,6 @@ git clone https://github.com/de-le-1100542/netlogo-first-steps-2021.git
 
 * Have a look at the commit history
 * Try to push/pull to and from this repository
+
+
+Nix getan
