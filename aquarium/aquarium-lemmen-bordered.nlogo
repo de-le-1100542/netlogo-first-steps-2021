@@ -25,15 +25,8 @@ to setup
 end
 
 to go
-  ask sharks [
-    ifelse ( patch-ahead  speed != nobody)
-      and ( [pcolor] of patch-ahead speed = blue )
-      and ( is-active? ) [
-      forward speed
-    ][
-      right 180
-    ]
-  ]
+
+  ask sharks [ hunt ]
 
   ask fish [
     ifelse ( patch-ahead  speed != nobody) and ( [pcolor] of patch-ahead speed = blue ) [
@@ -47,6 +40,7 @@ to go
   ; sharks change their activity state after activity-length ticks
   ask sharks with [ ticks mod activity-length = 0 ] [
     set is-active? not is-active?
+    if ( not is-active? ) [ ask my-links [die] ]
   ]
 
 
@@ -55,6 +49,29 @@ end
 
 
 ;-------------------------------
+
+; turtle procedure for sharks
+to hunt
+
+  ; create a link to a fish
+  if any? fish-here and count my-links = 0 [
+    create-link-to one-of fish-here
+  ]
+
+  if count my-links = 1 [
+    face one-of out-link-neighbors
+  ]
+
+  ifelse ( patch-ahead  speed != nobody)
+    and ( [pcolor] of patch-ahead speed = blue )
+    and ( is-active? ) [
+      forward speed
+   ][
+      right 180
+   ]
+
+end
+
 
 to setup-patches
   ask patches [
