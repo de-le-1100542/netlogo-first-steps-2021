@@ -13,6 +13,10 @@ breed [sharks shark]
 ; Assign a property to all turtles, regardless of breed
 turtles-own [speed]
 
+sharks-own [ activity-length
+             is-active?
+]
+
 to setup
   clear-all
   setup-patches
@@ -21,13 +25,29 @@ to setup
 end
 
 to go
-  ask turtles [
+  ask sharks [
     ifelse ( patch-ahead  speed != nobody) and ( [pcolor] of patch-ahead speed = blue ) [
       forward speed
     ][
       right 180
     ]
   ]
+
+  ask sharks [
+    ifelse ( patch-ahead  speed != nobody) and ( [pcolor] of patch-ahead speed = blue ) [
+      forward speed
+    ][
+      right 180
+    ]
+  ]
+
+
+  ; sharks change their activity state after activity-length ticks
+  ask sharks with [ ticks mod activity-length = 0 ] [
+    set is-active? not is-active?
+  ]
+
+
   tick
 end
 
@@ -56,6 +76,13 @@ to setup-turtles
     set color grey
     set size 6
     set speed (random-float 2.0) + 1.0
+
+    ; each shark has a different attention span and needs to rest
+    ; this span is a number between 20 and 120
+
+    set activity-length random 100 + 20
+    set is-active? true
+    ; how do we achieve that the sharks change their speed?
   ]
 
   ask turtles [
