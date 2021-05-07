@@ -2,7 +2,9 @@
 
 This repository serves students and teachers of the 2021 Ecosystem Modeling course as a playground for experimenting with `git`, with `markdown` and to exchange code.
 
-# What to do?????
+# What to do
+
+again, some random change
 
 * Explore the content of this repository by looking through the tabs
 * Edit this text file and change something trivial, save it and make your first commit :):)
@@ -14,7 +16,7 @@ You may use the `GitHub Desktop` client application, or another one like `Tortoi
 gh repo clone de-le-1100542/netlogo-first-steps-2021
 git clone https://github.com/de-le-1100542/netlogo-first-steps-2021.git
 ```
-# What to do next?????
+# What to do next
 
 * Have a look at the commit history
 * Try to push/pull to and from this repository
