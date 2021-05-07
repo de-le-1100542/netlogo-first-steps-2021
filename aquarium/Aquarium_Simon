@@ -1,112 +1,72 @@
-; This program is a tutorial model for a small aquarium full
-; of colorful fish
+; Seminar 4 - 29.04.21 - GitHub Speicher-Test
+; Author: SS
+; this simulation shows the life of an aquarium
 ;
-; @author Carsten Lemmen <carsten.lemmen@leuphana.de>
-; @copyright CC0  Creative Commons Zero
-; @date 2021-04-29
+; we look at fish
+; we have different species
+; alle Agenten heißen Turtles
 
-; define different types of turtles, all of these inherit
-; turtle properties and can be referenced by "turtle"
 breed [fish a-fish]
 breed [sharks shark]
+breed [corals coral]
+breed [algae alga]
 
-; Assign a property to all turtles, regardless of breed
-turtles-own [speed]
-
-sharks-own [ activity-length
-             is-active?
-]
+turtles-own [speed]  ; all turtles may have different speeds
 
 to setup
   clear-all
   setup-patches
   setup-turtles
-  reset-ticks
+  mark-a-black-border
 end
 
-to go
-  ask sharks [
-    ifelse ( patch-ahead  speed != nobody)
-      and ( [pcolor] of patch-ahead speed = blue )
-      and ( is-active? ) [
-      forward speed
-    ][
-      right 180
-    ]
-  ]
-
-  ask fish [
-    ifelse ( patch-ahead  speed != nobody) and ( [pcolor] of patch-ahead speed = blue ) [
-      forward speed
-    ][
-      right 180
-    ]
-  ]
-
-
-  ; sharks change their activity state after activity-length ticks
-  ask sharks with [ ticks mod activity-length = 0 ] [
-    set is-active? not is-active?
-  ]
-
-
-  tick
+to mark-a-black-border
+  ask patches with [pxcor > -17 and pycor > 8 ]
+  [set pcolor brown]
 end
-
-
-;-------------------------------
 
 to setup-patches
-  ask patches [
-    set pcolor blue
-  ]
-
-  ; Define a sky above the water with 12.5% of the area
-  ask patches with [pycor > 0.75 * max-pycor] [set pcolor cyan + 2]
+  ask patches [set pcolor blue + 1]
 end
 
 to setup-turtles
-
-  create-fish 25 [
-    set shape "fish"
+  create-fish 25 ; (patches with [pcolor = blue + 1]) ; Fische sollen nicht am Strand spawnen
+  [ set shape "fish"
     set size 2
-    set speed (random-float 1.0)
+    set speed random-float 1.0     ; random wählt eine ganze Zahl zwischen 0 und 2 (0,1,2) und
+                                   ; random-float ist eine dezimalzahl (bspw. 0,88765487 usw.)
   ]
-
-  create-sharks 3 [
-    set shape "fish"
+  create-sharks 3
+  [ set shape "fish"
     set color grey
     set size 6
-    set speed (random-float 2.0) + 1.0
-
-    ; each shark has a different attention span and needs to rest
-    ; this span is a number between 20 and 120
-
-    set activity-length random 100 + 20
-    set is-active? true
-    ; how do we achieve that the sharks change their speed?
+    set speed (random-float 2.0) + 1    ; sharks swim very quick and sometimes very slow
   ]
-
-  ask turtles [
-    setxy random-xcor random-ycor
-    set heading random 180
-  ]
+  ask turtles [ setxy random-xcor random-ycor ]
 end
 
-
-; It is very nice to do a setup automatically at the time you
-; load your netlogo model.  This can be done via the special
-; "to startup" procedure
-
-to startup
-  setup
+to go
+  ask turtles
+  [
+    ifelse [pcolor] of patch-ahead 1 = brown
+    [ set heading random 180 ]
+    [ forward speed ]]
 end
+
+;------- Lösungsansatz wie
+; ask turtles --> Alle Turtles werden angesprochen
+;[
+;  set heading random 180
+;  while [[pcolor] of patch-ahead 1 = green ]
+;  [lt random-float 360]
+;  forward end
+;end
 @#$#@#$#@
 GRAPHICS-WINDOW
-210
-10
-647
-448
+295
+15
+732
+453
 -1
 -1
 13.0
@@ -116,8 +76,8 @@ GRAPHICS-WINDOW
 1
 1
 0
-0
-0
+1
+1
 1
 -16
 16
@@ -130,12 +90,12 @@ ticks
 30.0
 
 BUTTON
-16
-13
-82
-46
-setup
-setup
+23
+42
+86
+75
+NIL
+setup\n
 NIL
 1
 T
@@ -147,11 +107,11 @@ NIL
 1
 
 BUTTON
-16
-55
-101
-88
-go-once
+110
+44
+185
+77
+go once
 go
 NIL
 1
@@ -164,12 +124,12 @@ NIL
 1
 
 BUTTON
-104
-55
-167
-88
-go
-go
+24
+96
+87
+129
+NIL
+go 
 T
 1
 T

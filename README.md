@@ -23,4 +23,4 @@ git clone https://github.com/de-le-1100542/netlogo-first-steps-2021.git
 * Readme again
 
 
-Nix getan
+Nix getan !!!-

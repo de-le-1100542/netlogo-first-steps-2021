@@ -1,9 +1,10 @@
-; This program is a tutorial model for a small aquarium full
+; This program is a tutorial model for a small aquariium full
 ; of colorful fish
 ;
 ; @author Carsten Lemmen <carsten.lemmen@leuphana.de>
 ; @copyright CC0  Creative Commons Zero
 ; @date 2021-04-29
+; modified 2021-05-07 - EB
 
 ; define different types of turtles, all of these inherit
 ; turtle properties and can be referenced by "turtle"
@@ -13,43 +14,23 @@ breed [sharks shark]
 ; Assign a property to all turtles, regardless of breed
 turtles-own [speed]
 
-sharks-own [ activity-length
-             is-active?
-]
 
 to setup
   clear-all
   setup-patches
   setup-turtles
+  ask turtles [ setxy random-xcor random-ycor ]
   reset-ticks
 end
 
 to go
-  ask sharks [
-    ifelse ( patch-ahead  speed != nobody)
-      and ( [pcolor] of patch-ahead speed = blue )
-      and ( is-active? ) [
-      forward speed
-    ][
-      right 180
-    ]
+  ask turtles
+  [ifelse (breed = sharks)
+      [ set heading ( 40 + random 100 ) ]
+      [ set heading random 180 ]
+    ;print heading
+    forward speed / 10
   ]
-
-  ask fish [
-    ifelse ( patch-ahead  speed != nobody) and ( [pcolor] of patch-ahead speed = blue ) [
-      forward speed
-    ][
-      right 180
-    ]
-  ]
-
-
-  ; sharks change their activity state after activity-length ticks
-  ask sharks with [ ticks mod activity-length = 0 ] [
-    set is-active? not is-active?
-  ]
-
-
   tick
 end
 
@@ -58,11 +39,8 @@ end
 
 to setup-patches
   ask patches [
-    set pcolor blue
+    set pcolor cyan
   ]
-
-  ; Define a sky above the water with 12.5% of the area
-  ask patches with [pycor > 0.75 * max-pycor] [set pcolor cyan + 2]
 end
 
 to setup-turtles
@@ -77,19 +55,7 @@ to setup-turtles
     set shape "fish"
     set color grey
     set size 6
-    set speed (random-float 2.0) + 1.0
-
-    ; each shark has a different attention span and needs to rest
-    ; this span is a number between 20 and 120
-
-    set activity-length random 100 + 20
-    set is-active? true
-    ; how do we achieve that the sharks change their speed?
-  ]
-
-  ask turtles [
-    setxy random-xcor random-ycor
-    set heading random 180
+    set speed (random-float 1.0) + 1.0
   ]
 end
 
@@ -116,8 +82,8 @@ GRAPHICS-WINDOW
 1
 1
 0
-0
-0
+1
+1
 1
 -16
 16

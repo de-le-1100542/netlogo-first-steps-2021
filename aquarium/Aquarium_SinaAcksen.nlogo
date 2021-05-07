@@ -1,105 +1,76 @@
-; This program is a tutorial model for a small aquarium full
-; of colorful fish
-;
-; @author Carsten Lemmen <carsten.lemmen@leuphana.de>
-; @copyright CC0  Creative Commons Zero
-; @date 2021-04-29
+; Author: SA
+; Date: 2021-04-29
+; this simulation shows the life of an aquarium
 
-; define different types of turtles, all of these inherit
-; turtle properties and can be referenced by "turtle"
+; we look at fish
+; we have different species
+
+
 breed [fish a-fish]
 breed [sharks shark]
 
-; Assign a property to all turtles, regardless of breed
-turtles-own [speed]
-
-sharks-own [ activity-length
-             is-active?
-]
+turtles-own [speed] 	; all turtles may have different speeds
 
 to setup
-  clear-all
-  setup-patches
-  setup-turtles
-  reset-ticks
+	clear-all
+	setup-patches
+	setup-turtles
 end
-
-to go
-  ask sharks [
-    ifelse ( patch-ahead  speed != nobody)
-      and ( [pcolor] of patch-ahead speed = blue )
-      and ( is-active? ) [
-      forward speed
-    ][
-      right 180
-    ]
-  ]
-
-  ask fish [
-    ifelse ( patch-ahead  speed != nobody) and ( [pcolor] of patch-ahead speed = blue ) [
-      forward speed
-    ][
-      right 180
-    ]
-  ]
-
-
-  ; sharks change their activity state after activity-length ticks
-  ask sharks with [ ticks mod activity-length = 0 ] [
-    set is-active? not is-active?
-  ]
-
-
-  tick
-end
-
-
-;-------------------------------
 
 to setup-patches
-  ask patches [
-    set pcolor blue
-  ]
-
-  ; Define a sky above the water with 12.5% of the area
-  ask patches with [pycor > 0.75 * max-pycor] [set pcolor cyan + 2]
+  	ask patches  with [pycor < 10 ]
+  [set pcolor cyan]
+  ask patches with [pycor >= 10]
+  [set pcolor blue]
 end
 
 to setup-turtles
+	create-fish fish-amount
+	[set shape "fish"
+	 set size 2
+set speed random-float 1.0
+]
+	create-sharks shark-amount
+	[ set shape "fish"
+	 set color grey
+	 set size 6
+	set speed (random-float 2.0) + 1	; sharks swim very quick and sometimes very slow
+	]
+  	ask turtles [set xcor random 16
+    set ycor random 9]
+end
 
-  create-fish 25 [
-    set shape "fish"
-    set size 2
-    set speed (random-float 1.0)
-  ]
-
-  create-sharks 3 [
-    set shape "fish"
-    set color grey
-    set size 6
-    set speed (random-float 2.0) + 1.0
-
-    ; each shark has a different attention span and needs to rest
-    ; this span is a number between 20 and 120
-
-    set activity-length random 100 + 20
-    set is-active? true
-    ; how do we achieve that the sharks change their speed?
-  ]
-
-  ask turtles [
-    setxy random-xcor random-ycor
-    set heading random 180
-  ]
+to go
+  move-turtles
+  reproduce
+  death
 end
 
 
-; It is very nice to do a setup automatically at the time you
-; load your netlogo model.  This can be done via the special
-; "to startup" procedure
+to move-turtles
+ask turtles
+	[ set heading random 180
+    while [[pcolor] of patch-ahead speed = blue]
+    [lt random-float 360]
+    forward speed]
+end
 
-to startup
-  setup
+to reproduce
+  if random 100 < reproduction-rate-fish
+ [ask fish
+    [ hatch 1]
+  ]
+  if random 100 < reproduction-rate-shark
+  [ask sharks
+    [hatch 1]
+  ]
+
+end
+
+to death
+  if random 200 < death-rate
+  [ask turtles
+    [die]]
 end
 @#$#@#$#@
 GRAPHICS-WINDOW
@@ -116,8 +87,8 @@ GRAPHICS-WINDOW
 1
 1
 0
-0
-0
+1
+1
 1
 -16
 16
@@ -130,11 +101,11 @@ ticks
 30.0
 
 BUTTON
-16
-13
-82
-46
-setup
+4
+10
+67
+43
+NIL
 setup
 NIL
 1
@@ -147,11 +118,28 @@ NIL
 1
 
 BUTTON
-16
-55
-101
-88
-go-once
+73
+10
+132
+43
+NIL
+go
+T
+1
+T
+OBSERVER
+NIL
+NIL
+NIL
+NIL
+1
+
+BUTTON
+137
+10
+193
+43
+go once
 go
 NIL
 1
@@ -163,22 +151,121 @@ NIL
 NIL
 1
 
-BUTTON
-104
+MONITOR
+11
+261
+78
+306
+NIL
+count fish
+17
+1
+11
+
+SLIDER
+6
 55
-167
+178
 88
-go
-go
-T
+fish-amount
+fish-amount
+0
+100
+11.0
 1
-T
-OBSERVER
-NIL
-NIL
-NIL
-NIL
 1
+NIL
+HORIZONTAL
+
+SLIDER
+6
+93
+178
+126
+shark-amount
+shark-amount
+0
+10
+2.0
+1
+1
+NIL
+HORIZONTAL
+
+SLIDER
+6
+130
+178
+163
+reproduction-rate-fish
+reproduction-rate-fish
+0
+50
+0.0
+1
+1
+NIL
+HORIZONTAL
+
+SLIDER
+5
+168
+187
+201
+reproduction-rate-shark
+reproduction-rate-shark
+0
+50
+0.0
+1
+1
+NIL
+HORIZONTAL
+
+MONITOR
+85
+260
+168
+305
+NIL
+count sharks
+17
+1
+11
+
+PLOT
+8
+311
+208
+461
+Ecosystem data
+NIL
+NIL
+0.0
+10.0
+0.0
+10.0
+true
+false
+"" ""
+PENS
+"default" 1.0 0 -13840069 true "plot count fish" "plot count fish"
+"pen-1" 1.0 0 -7500403 true "plot count sharks" "plot count sharks"
+
+SLIDER
+5
+206
+177
+239
+death-rate
+death-rate
+0
+100
+0.0
+1
+1
+NIL
+HORIZONTAL
 
 @#$#@#$#@
 ## WHAT IS IT?
