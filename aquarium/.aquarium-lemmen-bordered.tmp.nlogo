@@ -22,7 +22,7 @@ end
 
 to go
   ask turtles [
-    ifelse ( patch-ahead  speed != nobody) and ( [pcolor] of patch-ahead speed = blue ) [
+    ifelse ( patch-ahead  speed != nobody  ) [
       forward speed
     ][
       right 180
