@@ -4,8 +4,6 @@ This repository serves students and teachers of the 2021 Ecosystem Modeling cour
 
 # What to do
 
-again, some random change
-
 * Explore the content of this repository by looking through the tabs
 * Edit this text file and change something trivial, save it and make your first commit :):)
 * Clone the repository to your local computer and look at the files you received
@@ -24,3 +22,4 @@ git clone https://github.com/de-le-1100542/netlogo-first-steps-2021.git
 
 
 Nix getan
+Vino Bianco
