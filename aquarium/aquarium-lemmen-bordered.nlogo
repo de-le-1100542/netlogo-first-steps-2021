@@ -3,7 +3,7 @@
 ;
 ; @author Carsten Lemmen <carsten.lemmen@leuphana.de>
 ; @copyright CC0  Creative Commons Zero
-; @date 2021-04-29
+; @date 2021-05-7
 
 ; define different types of turtles, all of these inherit
 ; turtle properties and can be referenced by "turtle"
@@ -15,6 +15,7 @@ turtles-own [speed]
 
 sharks-own [ activity-length
              is-active?
+             is-hungry?
 ]
 
 to setup
@@ -32,17 +33,26 @@ to go
     ifelse ( patch-ahead  speed != nobody) and ( [pcolor] of patch-ahead speed = blue ) [
       forward speed
     ][
-      right 180
+      face one-of patches with [ pcolor = blue ]
     ]
   ]
 
 
   ; sharks change their activity state after activity-length ticks
   ask sharks with [ ticks mod activity-length = 0 ] [
+
+    ; change the activity state of a shark
     set is-active? not is-active?
-    if ( not is-active? ) [ ask my-links [die] ]
+
+    ; sharks that rest lose their prey, sharks awake hungry
+    ifelse ( is-active? ) [ set is-hungry? true][
+      set is-hungry? false
+      set color grey
+      ask my-links [die] ]
   ]
 
+  ; Refill the aquarium
+  setup-fish 25 - count fish
 
   tick
 end
@@ -53,13 +63,17 @@ end
 ; turtle procedure for sharks
 to hunt
 
+  let my-prey nobody
+  if is-hungry? [ set color red ]
+
   ; create a link to a fish
   if any? fish-here and count my-links = 0 [
     create-link-to one-of fish-here
   ]
 
   if count my-links = 1 [
-    face one-of out-link-neighbors
+    set my-prey one-of out-link-neighbors
+    face my-prey
   ]
 
   ifelse ( patch-ahead  speed != nobody)
@@ -67,10 +81,17 @@ to hunt
     and ( is-active? ) [
       forward speed
    ][
-      right 180
+       face one-of patches with [ pcolor = blue ]
    ]
 
+
+  if is-hungry? and count my-links = 1 [
+    if distance my-prey < speed [
+      ask my-prey [die]
+    ]
+  ]
 end
+
 
 
 to setup-patches
@@ -83,7 +104,7 @@ to setup-patches
 end
 
 
-
+; This procedure obtains an argument, the number of fish to create
 to setup-fish [n]
 
   create-fish n [
@@ -95,11 +116,9 @@ to setup-fish [n]
   ]
 end
 
-to setup-turtles
+to setup-sharks [n]
 
-  setup-fish 25
-
-  create-sharks 3 [
+  create-sharks n [
     set shape "shark"
     set color grey
     set size 6
@@ -110,12 +129,20 @@ to setup-turtles
 
     set activity-length random 100 + 20
     set is-active? true
-    ; how do we achieve that the sharks change their speed?
+    set is-hungry? false
   ]
+
+end
+
+to setup-turtles
+
+  setup-fish 25
+  setup-sharks 3
+
 
   ask turtles [
     move-to one-of patches with [ pcolor = blue ]
-    set heading random 180
+    face one-of patches with [ pcolor = blue ]
   ]
 end
 
