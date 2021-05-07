@@ -3,7 +3,7 @@
 ;
 ; @author Carsten Lemmen <carsten.lemmen@leuphana.de>
 ; @copyright CC0  Creative Commons Zero
-; @date 2021-04-29
+; @date 2021-05-7
 
 ; define different types of turtles, all of these inherit
 ; turtle properties and can be referenced by "turtle"
@@ -13,6 +13,10 @@ breed [sharks shark]
 ; Assign a property to all turtles, regardless of breed
 turtles-own [speed]
 
+sharks-own [ activity-length
+             is-active?
+             is-hungry?
+]
 
 to setup
   clear-all
@@ -22,43 +26,123 @@ to setup
 end
 
 to go
-  ask turtles [
-    ifelse ( patch-ahead  speed != nobody ) [
+
+  ask sharks [ hunt ]
+
+  ask fish [
+    ifelse ( patch-ahead  speed != nobody) and ( [pcolor] of patch-ahead speed = blue ) [
       forward speed
     ][
-      right 180
+      face one-of patches with [ pcolor = blue ]
     ]
   ]
+
+
+  ; sharks change their activity state after activity-length ticks
+  ask sharks with [ ticks mod activity-length = 0 ] [
+
+    ; change the activity state of a shark
+    set is-active? not is-active?
+
+    ; sharks that rest lose their prey, sharks awake hungry
+    ifelse ( is-active? ) [ set is-hungry? true][
+      set is-hungry? false
+      set color grey
+      ask my-links [die] ]
+  ]
+
+  ; Refill the aquarium
+  setup-fish 25 - count fish
+
   tick
 end
 
 
 ;-------------------------------
 
+; turtle procedure for sharks
+to hunt
+
+  let my-prey nobody
+  if is-hungry? [ set color red ]
+
+  ; create a link to a fish
+  if any? fish-here and count my-links = 0 [
+    create-link-to one-of fish-here
+  ]
+
+  if count my-links = 1 [
+    set my-prey one-of out-link-neighbors
+    face my-prey
+  ]
+
+  ifelse ( patch-ahead  speed != nobody)
+    and ( [pcolor] of patch-ahead speed = blue )
+    and ( is-active? ) [
+      forward speed
+   ][
+       face one-of patches with [ pcolor = blue ]
+   ]
+
+
+  if is-hungry? and count my-links = 1 [
+    if distance my-prey < speed [
+      ask my-prey [die]
+    ]
+  ]
+end
+
+
+
 to setup-patches
   ask patches [
-    set pcolor cyan
+    set pcolor blue
   ]
+
+  ; Define a sky above the water with 12.5% of the area
+  ask patches with [pycor > 0.75 * max-pycor] [set pcolor cyan + 2]
+end
+
+
+; This procedure obtains an argument, the number of fish to create
+to setup-fish [n]
+
+  create-fish n [
+    ; to use the different shapes of fish in your own model
+    ; use "Shape Editor" -> "Import from Library"
+    set shape one-of (list "fish" "fish 2" "fish 3")
+    set size 2
+    set speed (random-float 1.0)
+  ]
+end
+
+to setup-sharks [n]
+
+  create-sharks n [
+    set shape "shark"
+    set color grey
+    set size 6
+    set speed (random-float 2.0) + 1.0
+
+    ; each shark has a different attention span and needs to rest
+    ; this span is a number between 20 and 120
+
+    set activity-length random 100 + 20
+    set is-active? true
+    set is-hungry? false
+  ]
+
 end
 
 to setup-turtles
 
-  create-fish 25 [
-    set shape "fish"
-    set size 2
-    set speed (random-float 1.0)
-  ]
+  setup-fish 25
+  setup-sharks 3
 
-  create-sharks 3 [
-    set shape "fish"
-    set color grey
-    set size 6
-    set speed (random-float 2.0) + 1.0
-  ]
 
   ask turtles [
-    setxy random-xcor random-ycor
-    set heading random 180
+    move-to one-of patches with [ pcolor = blue ]
+    face one-of patches with [ pcolor = blue ]
   ]
 end
 
@@ -92,8 +176,8 @@ GRAPHICS-WINDOW
 16
 -16
 16
-0
-0
+1
+1
 1
 ticks
 30.0
@@ -152,39 +236,13 @@ NIL
 @#$#@#$#@
 ## WHAT IS IT?
 
-(a general understanding of what the model is trying to show or explain)
+This is a tutorial aquarium model demonstrating fish interactions
 
-## HOW IT WORKS
+## License
 
-(what rules the agents use to create the overall behavior of the model)
-
-## HOW TO USE IT
-
-(how to use the model, including a description of each of the items in the Interface tab)
-
-## THINGS TO NOTICE
-
-(suggested things for the user to notice while running the model)
-
-## THINGS TO TRY
-
-(suggested things for the user to try to do (move sliders, switches, etc.) with the model)
-
-## EXTENDING THE MODEL
-
-(suggested things to add or change in the Code tab to make the model more complicated, detailed, accurate, etc.)
-
-## NETLOGO FEATURES
-
-(interesting or unusual features of NetLogo that the model uses, particularly in the Code tab; or where workarounds were needed for missing features)
-
-## RELATED MODELS
-
-(models in the NetLogo Models Library and elsewhere which are of related interest)
-
-## CREDITS AND REFERENCES
-
-(a reference to the model's URL on the web if it has one, as well as any other necessary credits, citations, and links)
+@author Carsten Lemmen <lemmen@leuphana.de>
+@copyright 2021 Carsten Lemmen
+@license CC0 Creative-Commons Zero, you can do what you want with this code but if your coffee-maker crashes I am not responsible. 
 @#$#@#$#@
 default
 true
@@ -303,6 +361,44 @@ Polygon -1 true false 75 45 83 77 71 103 86 114 166 78 135 60
 Polygon -7500403 true true 30 136 151 77 226 81 280 119 292 146 292 160 287 170 270 195 195 210 151 212 30 166
 Circle -16777216 true false 215 106 30
 
+fish 2
+false
+0
+Polygon -1 true false 56 133 34 127 12 105 21 126 23 146 16 163 10 194 32 177 55 173
+Polygon -7500403 true true 156 229 118 242 67 248 37 248 51 222 49 168
+Polygon -7500403 true true 30 60 45 75 60 105 50 136 150 53 89 56
+Polygon -7500403 true true 50 132 146 52 241 72 268 119 291 147 271 156 291 164 264 208 211 239 148 231 48 177
+Circle -1 true false 237 116 30
+Circle -16777216 true false 241 127 12
+Polygon -1 true false 159 228 160 294 182 281 206 236
+Polygon -7500403 true true 102 189 109 203
+Polygon -1 true false 215 182 181 192 171 177 169 164 152 142 154 123 170 119 223 163
+Line -16777216 false 240 77 162 71
+Line -16777216 false 164 71 98 78
+Line -16777216 false 96 79 62 105
+Line -16777216 false 50 179 88 217
+Line -16777216 false 88 217 149 230
+
+fish 3
+false
+0
+Polygon -7500403 true true 137 105 124 83 103 76 77 75 53 104 47 136
+Polygon -7500403 true true 226 194 223 229 207 243 178 237 169 203 167 175
+Polygon -7500403 true true 137 195 124 217 103 224 77 225 53 196 47 164
+Polygon -7500403 true true 40 123 32 109 16 108 0 130 0 151 7 182 23 190 40 179 47 145
+Polygon -7500403 true true 45 120 90 105 195 90 275 120 294 152 285 165 293 171 270 195 210 210 150 210 45 180
+Circle -1184463 true false 244 128 26
+Circle -16777216 true false 248 135 14
+Line -16777216 false 48 121 133 96
+Line -16777216 false 48 179 133 204
+Polygon -7500403 true true 241 106 241 77 217 71 190 75 167 99 182 125
+Line -16777216 false 226 102 158 95
+Line -16777216 false 171 208 225 205
+Polygon -1 true false 252 111 232 103 213 132 210 165 223 193 229 204 247 201 237 170 236 137
+Polygon -1 true false 135 98 140 137 135 204 154 210 167 209 170 176 160 156 163 126 171 117 156 96
+Polygon -16777216 true false 192 117 171 118 162 126 158 148 160 165 168 175 188 183 211 186 217 185 206 181 172 171 164 156 166 133 174 121
+Polygon -1 true false 40 121 46 147 42 163 37 179 56 178 65 159 67 128 59 116
+
 flag
 false
 0
@@ -377,6 +473,19 @@ Polygon -7500403 true true 165 180 165 210 225 180 255 120 210 135
 Polygon -7500403 true true 135 105 90 60 45 45 75 105 135 135
 Polygon -7500403 true true 165 105 165 135 225 105 255 45 210 60
 Polygon -7500403 true true 135 90 120 45 150 15 180 45 165 90
+
+shark
+false
+0
+Polygon -7500403 true true 283 153 288 149 271 146 301 145 300 138 247 119 190 107 104 117 54 133 39 134 10 99 9 112 19 142 9 175 10 185 40 158 69 154 64 164 80 161 86 156 132 160 209 164
+Polygon -7500403 true true 199 161 152 166 137 164 169 154
+Polygon -7500403 true true 188 108 172 83 160 74 156 76 159 97 153 112
+Circle -16777216 true false 256 129 12
+Line -16777216 false 222 134 222 150
+Line -16777216 false 217 134 217 150
+Line -16777216 false 212 134 212 150
+Polygon -7500403 true true 78 125 62 118 63 130
+Polygon -7500403 true true 121 157 105 161 101 156 106 152
 
 sheep
 false
