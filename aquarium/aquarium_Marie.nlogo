@@ -1,106 +1,50 @@
-; This program is a tutorial model for a small aquarium full
-; of colorful fish
-;
-; @author Carsten Lemmen <carsten.lemmen@leuphana.de>
-; @copyright CC0  Creative Commons Zero
-; @date 2021-04-29
-
-; define different types of turtles, all of these inherit
-; turtle properties and can be referenced by "turtle"
 breed [fish a-fish]
 breed [sharks shark]
 
-; Assign a property to all turtles, regardless of breed
-turtles-own [speed]
-
-sharks-own [ activity-length
-             is-active?
-]
+turtles-own [speed]  ; all tutles may have differnent speeds
 
 to setup
   clear-all
   setup-patches
   setup-turtles
-  reset-ticks
 end
-
-to go
-  ask sharks [
-    ifelse ( patch-ahead  speed != nobody)
-      and ( [pcolor] of patch-ahead speed = blue )
-      and ( is-active? ) [
-      forward speed
-    ][
-      right 180
-    ]
-  ]
-
-  ask fish [
-    ifelse ( patch-ahead  speed != nobody) and ( [pcolor] of patch-ahead speed = blue ) [
-      forward speed
-    ][
-      right 180
-    ]
-  ]
-
-
-  ; sharks change their activity state after activity-length ticks
-  ask sharks with [ ticks mod activity-length = 0 ] [
-    set is-active? not is-active?
-  ]
-
-
-  tick
-end
-
-
-;-------------------------------
 
 to setup-patches
-  ask patches [
-    set pcolor blue
-  ]
-
-  ; Define a sky above the water with 12.5% of the area
-  ask patches with [pycor > 0.75 * max-pycor] [set pcolor cyan + 2]
+  ask patches [set pcolor cyan]
+  mark-a-boarder
 end
 
 to setup-turtles
-
-  create-fish 25 [
-    set shape "fish"
+  create-fish 25
+  [ set shape "fish"
     set size 2
-    set speed (random-float 1.0)
-  ]
-
-  create-sharks 3 [
-    set shape "fish"
-    set color grey
+    set speed random-float 1.0]
+  create-sharks 3
+  [ set shape "fish"
+    set color gray
     set size 6
-    set speed (random-float 2.0) + 1.0
+    set speed (random-float 1.0) + 1 ]
+  ask turtles [setxy random-xcor abs(random-ycor)*(-1) ]
+end
 
-    ; each shark has a different attention span and needs to rest
-    ; this span is a number between 20 and 120
+to mark-a-boarder
+  ask patches with [pycor > 0]
+    [set pcolor green]
+end
 
-    set activity-length random 100 + 20
-    set is-active? true
-    ; how do we achieve that the sharks change their speed?
-  ]
+;; -------------------------------------
 
-  ask turtles [
-    setxy random-xcor random-ycor
-    set heading random 180
+to go
+  ask turtles
+  [
+  set heading random 180
+  while [[pcolor] of patch-ahead 1 = green ]
+    [ lt random-float 360 ]
+  forward speed
   ]
 end
 
 
-; It is very nice to do a setup automatically at the time you
-; load your netlogo model.  This can be done via the special
-; "to startup" procedure
-
-to startup
-  setup
-end
 @#$#@#$#@
 GRAPHICS-WINDOW
 210
@@ -116,8 +60,8 @@ GRAPHICS-WINDOW
 1
 1
 0
-0
-0
+1
+1
 1
 -16
 16
@@ -130,11 +74,11 @@ ticks
 30.0
 
 BUTTON
-16
-13
-82
-46
-setup
+58
+78
+121
+111
+NIL
 setup
 NIL
 1
@@ -147,11 +91,11 @@ NIL
 1
 
 BUTTON
-16
-55
-101
-88
-go-once
+35
+168
+98
+201
+NIL
 go
 NIL
 1
@@ -164,11 +108,11 @@ NIL
 1
 
 BUTTON
-104
-55
-167
-88
-go
+57
+235
+147
+268
+go forever
 go
 T
 1
