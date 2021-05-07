@@ -8,7 +8,7 @@ breed [sharks shark]
 
 turtles-own [speed energy]  ; all tutles may have differnent speeds
 
-; Setup and methods
+; Setup and
 
 to setup
   clear-all
@@ -41,7 +41,7 @@ to mark-a-boarder
     [set pcolor green]
 end
 
-; go and methods
+;; -------------------------------------
 
 to go
   ask fish [move]
@@ -49,7 +49,7 @@ to go
     move
     set energy energy - 1
     eat-fish
-    dies
+    death
     ]
 
 end
@@ -63,13 +63,14 @@ end
 
 
 to eat-fish  ; wolf procedure
-  let prey one-of fish-here
-  if prey != nobody  [
-    ask prey [ die ]
+  let prey one-of fish-here                    ; grab a random sheep
+  if prey != nobody  [                          ; did we get one? if so,
+    ask prey [ die ]                            ; kill it, and...
   ]
 end
 
-to dies
+to death  ; turtle procedure (i.e. both wolf and sheep procedure)
+  ; when energy dips below zero, die
   if energy < 0 [ die ]
 end
 
