@@ -5,7 +5,7 @@ This repository serves students and teachers of the 2021 Ecosystem Modeling cour
 # What to do
 
 * Explore the content of this repository by looking through the tabs
-* Edit this text file and change something trivial, save it and make your first commit
+* Edit this text file and change something trivial, save it and make your first commit :):)
 * Clone the repository to your local computer and look at the files you received
 
 You may use the `GitHub Desktop` client application, or another one like `Tortoise Git` or install `git` in your command line, then perform one of the `clone` actions:
