@@ -1,6 +1,6 @@
 # Netlogo first steps 2021
 
-This repository, serves students and teachers of the 2021 Ecosystem Modeling course as a playground for experimenting with `git`, with `markdown` and to exchange code.
+This repository serves students and teachers of the 2021 Ecosystem Modeling course as a playground for experimenting with `git`, with `markdown` and to exchange code.
 
 # What to do
 
@@ -18,6 +18,7 @@ git clone https://github.com/de-le-1100542/netlogo-first-steps-2021.git
 
 * Have a look at the commit history
 * Try to push/pull to and from this repository
+* Readme again
 
 
 Nix getan
