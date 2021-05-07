@@ -13,6 +13,7 @@ breed [sharks shark]
 ; Assign a property to all turtles, regardless of breed
 turtles-own [speed]
 
+
 to setup
   clear-all
   setup-patches
@@ -22,7 +23,7 @@ end
 
 to go
   ask turtles [
-    ifelse ( patch-ahead  speed != nobody) and ( [pcolor] of patch-ahead speed = blue ) [
+    ifelse ( patch-ahead  speed != nobody ) [
       forward speed
     ][
       right 180
@@ -36,11 +37,8 @@ end
 
 to setup-patches
   ask patches [
-    set pcolor blue
+    set pcolor cyan
   ]
-
-  ; Define a sky above the water with 12.5% of the area
-  ask patches with [pycor > 0.75 * max-pycor] [set pcolor cyan + 2]
 end
 
 to setup-turtles
