@@ -26,14 +26,16 @@ end
 
 to go
   ask sharks [
-    ifelse ( patch-ahead  speed != nobody) and ( [pcolor] of patch-ahead speed = blue ) [
+    ifelse ( patch-ahead  speed != nobody)
+      and ( [pcolor] of patch-ahead speed = blue )
+      and ( is-active? ) [
       forward speed
     ][
       right 180
     ]
   ]
 
-  ask sharks [
+  ask fish [
     ifelse ( patch-ahead  speed != nobody) and ( [pcolor] of patch-ahead speed = blue ) [
       forward speed
     ][
